@@ -1,0 +1,29 @@
+library(ggplot2)
+library(gridExtra)
+
+setwd("C:\\Users\\Prateek Raj\\Desktop\\New folder (3)\\Analyzing data")
+data<-read.csv("houston.csv")
+str(data)
+data_filtered<-data[data$KWH.Used>0.25,]
+str(data_filtered)
+data_filtered$Transaction.Date<-as.POSIXlt(strptime(data_filtered$Transaction.Date, "%m/%d/%Y %H:%M"))
+data_filteredDC<-data_filtered[data_filtered$DC.L2=="DC",]
+data_filteredL2<-data_filtered[data_filtered$DC.L2=="L2",]
+
+d<-as.POSIXlt(strptime("1/1/2013 0:00", "%m/%d/%Y %H:%M"))
+cluster_data<-data_filtered[data_filtered$Transaction.Date>=d,]
+
+str(cluster_data)
+cluster_data$Serial.Number<-NULL
+cluster_data$Transaction.ID<-NULL
+cluster_data$RFID<-NULL
+cluster_data$Account.Balance<-NULL
+str(cluster_data)
+
+cluster_dataDC<-cluster_data[cluster_data$DC.L2=="DC",]
+cluster_dataL2<-cluster_data[cluster_data$DC.L2=="L2",]
+
+t<-table(factor(cluster_dataDC$Asset.Name),factor(cluster_dataDC$Transaction.Date$hour),factor(cluster_dataDC$Transaction.Date$year+1900))
+data<-data.frame(unclass(t))
+data
+kmeans(data,3)
